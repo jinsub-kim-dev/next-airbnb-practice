@@ -9,6 +9,7 @@ import Input from "../common/Input";
 import palette from "../../styles/palette";
 import { dayList, monthList, yearList } from "../../lib/staticData";
 import Selector from "../common/Selector";
+import Button from "../common/Button";
 
 const Container = styled.form`
   width: 568px;
@@ -57,9 +58,15 @@ const Container = styled.form`
       margin-right: 16px;
       width: 25%;
     }
-    .sigh-up-modal-birthday-year-selector {
+    .sign-up-modal-birthday-year-selector {
       width: 33.3333%;
     }
+  }
+
+  .sign-up-modal-submit-button-wrapper {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid ${palette.gray_eb};
   }
 `;
 
@@ -184,6 +191,9 @@ const SignUpModal: React.FC = () => {
             onChange={onChangeBirthYear}
           />
         </div>
+      </div>
+      <div className="sign-up-modal-submit-button-wrapper">
+        <Button type="submit">가입하기</Button>
       </div>
     </Container>
   );
