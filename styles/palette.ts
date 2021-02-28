@@ -22,6 +22,6 @@ export default {
   gray_eb: "#EBEBEB",
   gray_e5: "#E5E5E5",
   gray_f7: "#F7F7F7",
-  dark_cyan: "008489",
+  dark_cyan: "#008489",
   green: "#008A05",
 };
