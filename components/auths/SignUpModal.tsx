@@ -13,6 +13,8 @@ import Button from "../common/Button";
 import { signupAPI } from "../../lib/api/auth";
 import { useDispatch } from "react-redux";
 import { userActions } from "../../store/user";
+import { commonActions } from "../../store/common";
+import useValidateMode from "../../hooks/useValidateMode";
 
 const Container = styled.form`
   width: 568px;
@@ -84,6 +86,8 @@ const SignUpModal: React.FC = () => {
   const [birthDay, setBirthDay] = useState<string | undefined>();
   const [birthMonth, setBirthMonth] = useState<string | undefined>();
 
+  const { setValidateMode } = useValidateMode();
+
   const dispatch = useDispatch();
 
   const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,6 +125,8 @@ const SignUpModal: React.FC = () => {
   const onSubmitSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    setValidateMode(true);
+
     try {
       const signUpBody = {
         email,
@@ -149,6 +155,9 @@ const SignUpModal: React.FC = () => {
           name="email"
           value={email}
           onChange={onChangeEmail}
+          useValidation
+          isValid={!!email}
+          errorMessage="이메일이 필요합니다"
         />
       </div>
       <div className="input-wrapper">
@@ -157,6 +166,9 @@ const SignUpModal: React.FC = () => {
           icon={<PersonIcon />}
           value={lastname}
           onChange={onChangeLastname}
+          useValidation
+          isValid={!!lastname}
+          errorMessage="이름을 입력하세요"
         />
       </div>
       <div className="input-wrapper">
@@ -165,9 +177,12 @@ const SignUpModal: React.FC = () => {
           icon={<PersonIcon />}
           value={firstname}
           onChange={onChangeFirstname}
+          useValidation
+          isValid={!!firstname}
+          errorMessage="성을 입력하세요"
         />
       </div>
-      <div className="input-wrapper">
+      <div className="input-wrapper sign-up-password-input-wrapper">
         <Input
           placeholder="비밀번호 설정하기"
           type={hidePassword ? "password" : "text"}
@@ -180,6 +195,9 @@ const SignUpModal: React.FC = () => {
           }
           value={password}
           onChange={onChangePassword}
+          useValidation
+          isValid={!!password}
+          errorMessage="비밀번호를 입력하세요"
         />
       </div>
       <p className="sign-up-birthday-label">생일</p>

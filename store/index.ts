@@ -5,8 +5,10 @@ import {
 } from "react-redux";
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import user from "./user";
+import common from "./common";
 
 const rootReducer = combineReducers({
+  common: common.reducer,
   user: user.reducer,
 });
 
