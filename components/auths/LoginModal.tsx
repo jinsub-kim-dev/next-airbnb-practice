@@ -9,6 +9,7 @@ import ClosedEyeIcon from "../../public/static/svg/auth/closed_eye.svg";
 import palette from "../../styles/palette";
 import Button from "../common/Button";
 import Input from "../common/Input";
+import { loginAPI } from "../../lib/api/auth";
 
 const Container = styled.form`
   width: 568px;
@@ -76,8 +77,25 @@ const LoginModal: React.FC<IProps> = ({ closeModal }) => {
     dispatch(authActions.setAuthMode("signup"));
   };
 
+  // 로그인 클릭 시
+  const onSubmitLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!email || !password) {
+      alert("이메일과 비밀번호를 입력해주세요.");
+    } else {
+      const loginBody = { email, password };
+
+      try {
+        const { data } = await loginAPI(loginBody);
+        console.log(data);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+
   return (
-    <Container>
+    <Container onSubmit={onSubmitLogin}>
       <CloseXIcon className="modal-close-x-icon" onClick={closeModal} />
       <div className="login-input-wrapper">
         <Input
