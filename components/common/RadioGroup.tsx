@@ -62,6 +62,10 @@ const Container = styled.div<{ isValid: boolean; validateMode: boolean }>`
     }}
   }
 
+  input[type="radio"]:checked {
+    background-color: ${palette.dark_cyan};
+    border: 0;
+  }
   input[type="radio"]:checked:after {
     content: "";
     width: 6px;
