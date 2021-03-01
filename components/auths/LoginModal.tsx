@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../store/auth";
 import styled from "styled-components";
@@ -11,6 +11,7 @@ import Button from "../common/Button";
 import Input from "../common/Input";
 import { loginAPI } from "../../lib/api/auth";
 import useValidateMode from "../../hooks/useValidateMode";
+import { userActions } from "../../store/user";
 
 const Container = styled.form`
   width: 568px;
@@ -61,6 +62,12 @@ const LoginModal: React.FC<IProps> = ({ closeModal }) => {
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    return () => {
+      setValidateMode(false);
+    };
+  }, []);
+
   // 이메일 주소 변경시
   const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -92,6 +99,8 @@ const LoginModal: React.FC<IProps> = ({ closeModal }) => {
 
       try {
         const { data } = await loginAPI(loginBody);
+        dispatch(userActions.setLoggedUser(data));
+        closeModal();
         console.log(data);
       } catch (e) {
         console.log(e);
