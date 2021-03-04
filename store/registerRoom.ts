@@ -22,7 +22,7 @@ type RegisterRoomState = {
   streetAddress: string;
   detailAddress: string;
   postcode: string;
-  liatitude: number;
+  latitude: number;
   longitude: number;
 };
 
@@ -63,7 +63,7 @@ const initialState: RegisterRoomState = {
   //* 우편번호
   postcode: "",
   //* 위도
-  liatitude: 0,
+  latitude: 0,
   //* 경도
   longitude: 0,
 };
@@ -211,7 +211,7 @@ const registerRoom = createSlice({
     },
     //* 위도 변경하기
     setLatitude(state, action: PayloadAction<number>) {
-      state.liatitude = action.payload;
+      state.latitude = action.payload;
     },
     //* 경도 변경하기
     setLongitude(state, action: PayloadAction<number>) {
