@@ -127,9 +127,12 @@ const Selector: React.FC<IProps> = ({
   ...props
 }) => {
   const validateMode = useSelector((state) => state.common.validateMode);
-
   return (
-    <Container isValid={!!isValid} validateMode={validateMode} type={type}>
+    <Container
+      isValid={!!isValid}
+      validateMode={useValidation && validateMode}
+      type={type}
+    >
       <label>
         {label && <span>{label}</span>}
         <select {...props}>
