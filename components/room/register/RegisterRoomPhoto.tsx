@@ -8,6 +8,8 @@ import UploadIcon from "../../../public/static/svg/register/upload.svg";
 import { uploadFileAPI } from "../../../lib/api/file";
 import { useDispatch } from "react-redux";
 import { registerRoomActions } from "../../../store/registerRoom";
+import RegisterRoomPhotoCardList from "./RegisterRoomPhotoCardList";
+import RegisterRoomFooter from "./RegisterRoomFooter";
 
 const Container = styled.div`
   padding: 62px 30px 100px;
@@ -92,6 +94,11 @@ const RegisterRoomPhoto: React.FC = () => {
           </>
         </div>
       )}
+      {!isEmpty(photos) && <RegisterRoomPhotoCardList photos={photos} />}
+      <RegisterRoomFooter
+        prevHref="/room/register/conveniences"
+        nextHref="/room/register/description"
+      />
     </Container>
   );
 };
