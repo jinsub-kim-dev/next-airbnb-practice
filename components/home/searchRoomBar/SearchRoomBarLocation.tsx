@@ -1,10 +1,13 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import OutsideClickHandler from "react-outside-click-handler";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import { getPlaceAPI, searchPlacesAPI } from "../../../lib/api/map";
 import { useSelector } from "../../../store";
 import { searchRoomActions } from "../../../store/searchRoom";
 import palette from "../../../styles/palette";
+import isEmpty from "lodash/isEmpty";
+import useDebounce from "../../../hooks/useDebounce";
 
 const Container = styled.div`
   position: relative;
@@ -67,16 +70,29 @@ const Container = styled.div`
 
 const SearchRoomBarLocation: React.FC = () => {
   const location = useSelector((state) => state.searchRoom.location);
+  const [results, setResults] = useState<
+    { description: string; placeId: string }[]
+  >([]);
 
   const dispatch = useDispatch();
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+  const [popupOpened, setPopupOpened] = useState(false);
+  const searchKeyword = useDebounce(location, 150);
+
   //* 위치 변경 Dispatch
   const setLocationDispatch = (value: string) => {
     dispatch(searchRoomActions.setLocation(value));
   };
-  const [popupOpened, setPopupOpened] = useState(false);
+  //* 위도 변경 Dispatch
+  const setLatitudeDispatch = (value: number) => {
+    dispatch(searchRoomActions.setLatitude(value));
+  };
+  //* 경도 변경 Dispatch
+  const setLongitudeDispatch = (value: number) => {
+    dispatch(searchRoomActions.setLongitude(value));
+  };
 
   const onClickInput = () => {
     if (inputRef.current) {
@@ -84,6 +100,51 @@ const SearchRoomBarLocation: React.FC = () => {
     }
     setPopupOpened(true);
   };
+
+  const searchPlaces = async () => {
+    try {
+      const { data } = await searchPlacesAPI(encodeURI(location));
+      setResults(data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const onClickNearPlaces = () => {
+    setPopupOpened(false);
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        setLocationDispatch("근처 추천 장소");
+        setLatitudeDispatch(coords.latitude);
+        setLongitudeDispatch(coords.longitude);
+      },
+      (e) => {
+        console.log(e);
+      },
+    );
+  };
+
+  const onClickResult = async (placeId: string) => {
+    try {
+      const { data } = await getPlaceAPI(placeId);
+      setLocationDispatch(data.location);
+      setLatitudeDispatch(data.latitude);
+      setLongitudeDispatch(data.longitude);
+      setPopupOpened(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  //* 검색어가 변하면 장소를 검색
+  useEffect(() => {
+    if (!searchKeyword) {
+      setResults([]);
+    }
+    if (searchKeyword) {
+      searchPlaces();
+    }
+  }, [searchKeyword]);
 
   return (
     <Container onClick={onClickInput}>
@@ -97,9 +158,24 @@ const SearchRoomBarLocation: React.FC = () => {
             ref={inputRef}
           />
         </div>
-        {popupOpened && (
+        {popupOpened && location !== "근처 추천 장소" && (
           <ul className="search-room-bar-location-results">
-            <li>근처 추천 장소</li>
+            {!location && (
+              <li role="presentation" onClick={onClickNearPlaces}>
+                근처 추천 장소
+              </li>
+            )}
+            {!isEmpty(results) &&
+              results.map((result, index) => (
+                <li
+                  role="presentation"
+                  key={index}
+                  onClick={() => onClickResult(result.placeId)}
+                >
+                  {result.description}
+                </li>
+              ))}
+            {location && isEmpty(results) && <li>검색 결과가 없습니다.</li>}
           </ul>
         )}
       </OutsideClickHandler>
